@@ -5,10 +5,11 @@
     "params": {}
   },
   "scale": 3,
-  "train_set": "91-image",
-  "val_set": "Set5",
-  "test_sets": ["Set5", "Set14"],
-  "lr_sub_size": 11,
-  "lr_sub_stride": 5,
+  "train_set": "Train_SSH",
+  "val_set": "Val_SSH",
+  "test_set": "Test_SSH",
+  "apply_set": "Apply_SSH",
+  "lr_sub_size": 20,
+  "lr_sub_stride": 9,
   "epochs": 1
 }

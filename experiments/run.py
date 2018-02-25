@@ -37,5 +37,4 @@ expt.train(train_set=param['train_set'], val_set=param['val_set'],
            epochs=param['epochs'], resume=True)
 
 # Evaluation
-for test_set in param['test_sets']:
-    expt.test(test_set=test_set)
+expt.test(test_set=param['test_set'])

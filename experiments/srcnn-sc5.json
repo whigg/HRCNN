@@ -1,0 +1,22 @@
+{
+  "save_dir": "srcnn-sc5",
+  "model": {
+    "name": "srcnn",
+    "params": {"f": [9, 3, 5],  "n": [64, 32]}
+  },
+  "scale": 5,
+  "train_set": "Train_SST",
+  "val_set": "Val_SST",
+  "test_set": "Test_SST",
+  "apply_set": "Apply_SST",
+  "lr_sub_size": 20,
+  "lr_sub_stride": 9,
+  "epochs": 500,
+  "optimizer": {
+    "name": "adam",
+    "params": {
+      "lr": 1e-5,
+      "decay": 1e-5
+    }
+  }
+}

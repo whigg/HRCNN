@@ -1,15 +1,16 @@
 {
-  "save_dir": "fsrcnn-sc4",
+  "save_dir": "fsrcnn-sc5",
   "model": {
     "name": "fsrcnn",
     "params": {"d": 56, "s": 12, "m": 4}
   },
-  "scale": 4,
-  "train_set": "91-image",
-  "val_set": "Set5",
-  "test_sets": ["Set5", "Set14"],
-  "lr_sub_size": 11,
-  "lr_sub_stride": 5,
+  "scale": 5,
+  "train_set": "Train_SST",
+  "val_set": "Val_SST",
+  "test_set": "Test_SST",
+  "apply_set": "Apply_SST",
+  "lr_sub_size": 20,
+  "lr_sub_stride": 9,
   "epochs": 500,
   "optimizer": {
     "name": "adam",

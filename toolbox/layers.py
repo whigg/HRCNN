@@ -1,12 +1,13 @@
-from keras.engine.topology import Layer
 import numpy as np
 import tensorflow as tf
+from keras.engine.topology import Layer
 
 
 custom_layers = {}
 
 
 class ImageRescale(Layer):
+
     def __init__(self, scale, method=tf.image.ResizeMethod.BICUBIC,
                  trainable=False, **kwargs):
         self.scale = scale
@@ -40,6 +41,7 @@ class Conv2DSubPixel(Layer):
 
     See https://arxiv.org/abs/1609.05158
     """
+
     def __init__(self, scale, trainable=False, **kwargs):
         self.scale = scale
         super().__init__(trainable=trainable, **kwargs)
@@ -71,3 +73,4 @@ class Conv2DSubPixel(Layer):
 
 
 custom_layers['Conv2DSubPixel'] = Conv2DSubPixel
+

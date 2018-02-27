@@ -6,12 +6,12 @@
   },
   "scale": 3,
   "train_set": "Train_SSH",
-  "val_set": "Val_SSH",
+  "dev_set": "Dev_SSH",
   "test_set": "Test_SSH",
   "apply_set": "Apply_SSH",
-  "lr_sub_size": 20,
-  "lr_sub_stride": 9,
-  "epochs": 500,
+  "lr_sub_size": 33,
+  "lr_sub_stride": 14,
+  "epochs": 100,
   "optimizer": {
     "name": "adam",
     "params": {

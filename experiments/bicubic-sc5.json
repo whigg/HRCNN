@@ -6,10 +6,10 @@
   },
   "scale": 5,
   "train_set": "Train_SST",
-  "val_set": "Val_SST",
+  "dev_set": "Dev_SST",
   "test_set": "Test_SST",
   "apply_set": "Apply_SST",
-  "lr_sub_size": 20,
-  "lr_sub_stride": 9,
+  "lr_sub_size": 33,
+  "lr_sub_stride": 14,
   "epochs": 1
 }

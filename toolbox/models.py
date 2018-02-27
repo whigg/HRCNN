@@ -1,9 +1,8 @@
+import tensorflow as tf
 from keras.layers import Conv2D
 from keras.layers import Conv2DTranspose
 from keras.layers import InputLayer
 from keras.models import Sequential
-import tensorflow as tf
-
 from toolbox.layers import ImageRescale
 from toolbox.layers import Conv2DSubPixel
 
@@ -69,3 +68,4 @@ def espcn(x, f=[5, 3, 3], n=[64, 32], scale=3):
 
 def get_model(name):
     return globals()[name]
+

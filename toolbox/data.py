@@ -2,7 +2,7 @@
 import numpy as np
 import netCDF4
 from functools import partial
-from toolbox.paths import data_dir
+from paths import data_dir
 from scipy.interpolate import interp2d
 
 
@@ -54,8 +54,12 @@ def load_set(name, lr_sub_size=11, lr_sub_stride=5, scale=3):
 def load_data_pair(path, scale=3):
     """ Load entire HR grid and bicubic-interpolated LR grid """
     # Load netcdf file to get array
+    if scale==3:
+        var="SSH"
+    elif scale==5:
+        var="SST"
     nc = netCDF4.Dataset(path, "r")
-    data = nc.variables["SSH"][:] 
+    data = nc.variables[var][:]
     nc.close()
     # crop array to adapt to scale
     hr_data = modcrop(data, scale)
@@ -65,9 +69,13 @@ def load_data_pair(path, scale=3):
 
 
 def load_data_single(path, scale=3):
-    """ Load entire LR grid from observations """ 
+    """ Load entire LR grid from observations """
+    if scale==3:
+        var="SSH"
+    elif scale==5:
+        var="SST"
     nc = netCDF4.Dataset(path, "r")
-    data = nc.variables["SSH"][:] 
+    data = nc.variables[var][:]
     nc.close()
     return data
 

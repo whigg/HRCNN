@@ -4,7 +4,7 @@
 import random
 import os
 import sys
-from toolbox.paths import data_dir
+from paths import data_dir
 import shutil as st
 
 

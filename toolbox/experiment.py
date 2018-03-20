@@ -11,18 +11,17 @@ from keras import backend as K
 from keras.callbacks import CSVLogger
 from keras.callbacks import ModelCheckpoint
 from keras.optimizers import adam
-from toolbox.data import load_data_pair
-from toolbox.data import load_data_single
-from toolbox.metrics import psnr
-from toolbox.models import bicubic
-from toolbox.paths import data_dir
-
+from data import load_data_pair
+from data import load_data_single
+from metrics import psnr
+from models import bicubic
+from paths import data_dir
 
 
 class Experiment(object):
 
 
-    def __init__(self, scale=3, load_set=None, build_model=None, optimizer='adam', save_dir='.'):
+    def __init__(self, scale=3, load_set=None, build_model=None, optimizer=adam, save_dir='.'):
         self.scale = scale
         self.load_set = partial(load_set, scale=scale)
         self.build_model = partial(build_model, scale=scale)
@@ -74,11 +73,6 @@ class Experiment(object):
         return array
 
 
-    def post_process(self, array, auxiliary_array):
-        array = np.concatenate([array, auxiliary_array[..., 1:]], axis=-1)
-        return array
-
-
     def inverse_post_process(self, array):
         array = self._ensure_dimension(array, 4)
         array = self._ensure_channel(array, 0)
@@ -115,11 +109,7 @@ class Experiment(object):
             latest_epoch = self.latest_epoch
             if latest_epoch > -1:
                 weights_file = self.weights_file(epoch=latest_epoch)
-        # Inherit weights
-        if resume:
-            latest_epoch = self.latest_epoch
-            if latest_epoch > -1:
-                weights_file = self.weights_file(epoch=latest_epoch)
+                model.load_weights(str(weights_file))
             initial_epoch = latest_epoch + 1
         else:
             initial_epoch = 0
@@ -127,13 +117,11 @@ class Experiment(object):
         # Set up callbacks
         callbacks = []
         callbacks += [ModelCheckpoint(str(self.model_file))]
-        callbacks += [ModelCheckpoint(str(self.weights_file()),
-                                      save_weights_only=True)]
+        callbacks += [ModelCheckpoint(str(self.weights_file()), save_weights_only=True)]
         callbacks += [CSVLogger(str(self.history_file), append=resume)]
 
         # Train
-        model.fit(x_train, y_train, epochs=epochs, callbacks=callbacks,
-                  validation_data=(x_dev, y_dev), initial_epoch=initial_epoch)
+        model.fit(x_train, y_train, epochs=epochs, callbacks=callbacks, validation_data=(x_dev, y_dev), initial_epoch=initial_epoch)
 
         # Plot metrics history
         prefix = str(self.history_file).rsplit('.', maxsplit=1)[0]
@@ -160,9 +148,7 @@ class Experiment(object):
         # Evaluate metrics on each data
         rows = []
         for data_path in (data_dir / test_set).glob('*'):
-            rows += [self.test_on_data(str(data_path),
-                                        str(datatest_dir / data_path.stem),
-                                        metrics=metrics)]
+            rows += [self.test_on_data(str(data_path), str(datatest_dir / data_path.stem), metrics=metrics)]
         df = pd.DataFrame(rows)
 
         # Compute average metrics
@@ -195,7 +181,6 @@ class Experiment(object):
         start = time.perf_counter()
         y_pred = model.predict_on_batch(x)
         end = time.perf_counter()
-        output_array = self.post_process(y_pred[0], bicubic_array[0])
 
         # Record metrics
         row = pd.Series()
@@ -206,26 +191,29 @@ class Experiment(object):
             row[metric.__name__] = K.eval(metric(y_true, y_pred))
 
         # Save data
+        if self.scale==3:
+            nvar="SSH"
+        elif self.scale==5:
+            nvar="SST"
         data_to_save = []
         data_to_save += [(hr_data, 'original')]
-        data_to_save += [(output_array, 'output')]
+        data_to_save += [(y_pred, 'output')]
         data_to_save += [(lr_data, 'input')]
+        data_to_save += [(bicubic_array, 'bicubic')]
         for subdata, label in data_to_save:
             subdata = np.squeeze(subdata)
             [Nlat, Nlon] = subdata.shape
             ncout = netCDF4.Dataset('.'.join([prefix, label, suffix]),'w')
             ncout.createDimension("lat", Nlat)
             ncout.createDimension("lon", Nlon)
-            dSSH = ncout.createVariable("SSH", "f4", ("lat","lon"))
-            dSSH.long_name = "Sea Surface Height Above Geoid"
-            dSSH.units = "m"
-            dSSH[:] = subdata
+            dvar = ncout.createVariable(nvar, "f4", ("lat","lon"))
+            dvar[:] = subdata
             ncout.close()
 
         return row
 
 
-    def apply(self, apply_set):
+    def apply_lr(self, apply_set):
         print('Apply on', apply_set)
         dataapply_dir = self.apply_dir / apply_set
         dataapply_dir.mkdir(exist_ok=True)
@@ -264,7 +252,6 @@ class Experiment(object):
         start = time.perf_counter()
         y_pred = model.predict_on_batch(x)
         end = time.perf_counter()
-        output_array = self.post_process(y_pred[0], bicubic_array[0])
 
         # Record metrics
         row = pd.Series()
@@ -272,19 +259,22 @@ class Experiment(object):
         row['time'] = end - start
 
         # Save data
+        if self.scale==3:
+            nvar="SSH"
+        elif self.scale==5:
+            nvar="SST"
         data_to_save = []
-        data_to_save += [(output_array, 'output')]
+        data_to_save += [(y_pred, 'output')]
         data_to_save += [(lr_data, 'input')]
+        data_to_save += [(bicubic_array, 'bicubic')]
         for subdata, label in data_to_save:
             subdata = np.squeeze(subdata)
             [Nlat, Nlon] = subdata.shape
             ncout = netCDF4.Dataset('.'.join([prefix, label, suffix]),'w')
             ncout.createDimension("lat", Nlat)
             ncout.createDimension("lon", Nlon)
-            dSSH = ncout.createVariable("SSH", "f4", ("lat","lon"))
-            dSSH.long_name = "Sea Surface Height Above Geoid"
-            dSSH.units = "m"
-            dSSH[:] = subdata
+            dvar = ncout.createVariable(nvar, "f4", ("lat","lon"))
+            dvar[:] = subdata
             ncout.close()
 
         return row

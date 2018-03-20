@@ -1,8 +1,8 @@
 {
-  "save_dir": "espcn-sc5",
+  "save_dir": "vdsr-sc5",
   "model": {
-    "name": "espcn",
-    "params": {"f": [5, 3, 3],  "n": [64, 32]}
+    "name": "vdsr",
+    "params": {"f": 3,  "n": 64, "l": 19}
   },
   "scale": 5,
   "train_set": "Train_SST",
@@ -11,7 +11,7 @@
   "apply_set": "Apply_SST",
   "lr_sub_size": 10,
   "lr_sub_stride": 10,
-  "epochs": 1000,
+  "epochs": 100,
   "optimizer": {
     "name": "adam",
     "params": {

@@ -1,10 +1,10 @@
 {
-  "save_dir": "bicubic-sc3",
+  "save_dir": "bicubic-sc10",
   "model": {
     "name": "bicubic",
     "params": {}
   },
-  "scale": 3,
+  "scale": 10,
   "train_set": "Train_SSH",
   "dev_set": "Dev_SSH",
   "test_set": "Test_SSH",

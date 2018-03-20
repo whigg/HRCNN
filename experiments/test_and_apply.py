@@ -26,10 +26,7 @@ else:
 
 # Data
 load_set = partial(load_set, lr_sub_size=param['lr_sub_size'], lr_sub_stride=param['lr_sub_stride'])
-
-# Training
 expt = Experiment(scale=param['scale'], load_set=load_set, build_model=build_model, optimizer=optimizer, save_dir=param['save_dir'])
-expt.train(train_set=param['train_set'], dev_set=param['dev_set'], epochs=param['epochs'], resume=True)
 
 # Evaluation
 expt.test(test_set=param['test_set'])
